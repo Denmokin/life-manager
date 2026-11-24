@@ -40,14 +40,31 @@ which serves everything on http://localhost:8787.
 
 Your data lives in `data/store.json`. Back that file up; it's your whole brain.
 
-## On the phone
+## The live app (cloud)
 
-1. Run `npm start` on the computer and find its local IP (`ip -4 addr`).
-2. Open `http://<that-ip>:8787` on the phone (same Wi-Fi).
+**https://denmokin.github.io/life-manager/**: open it on any device, enter your passphrase once, then install it (Chrome menu → Install).
 
-That works, but phones only allow **install to home screen and offline use over HTTPS**. The easiest way to get HTTPS at home is [Tailscale](https://tailscale.com): install it on both devices, then run `tailscale serve --bg 8787` on the computer and open the `https://…ts.net` address it prints. That also works away from home.
+| Part | Where it runs |
+| --- | --- |
+| App screens | GitHub Pages, rebuilt on every push to `main` (`.github/workflows/pages.yml`) |
+| API + AI sorting | Supabase Edge Function `api` (`supabase/functions/api/`) |
+| Data | Supabase Postgres table `items` (`supabase/migrations/`) |
 
-If the server can be reached from outside your home network, set `APP_TOKEN` in `.env` and enter the same token in the app under **All → Settings**.
+Secrets live in Supabase → Edge Functions → Secrets: `ANTHROPIC_API_KEY` and `APP_TOKEN` (your passphrase). The passphrase is also in your local `.env` so you can find it again.
+
+To update the cloud API after changing `shared/` or the function:
+
+```bash
+npx supabase login
+```
+
+```bash
+npm run deploy:function
+```
+
+The free Supabase plan pauses a project after 7 days without use; restore it with one click in the dashboard.
+
+The local server (`npm run dev` / `npm start`) is still there for trying changes before pushing.
 
 ## Quick-dump hotkey on Omarchy
 
